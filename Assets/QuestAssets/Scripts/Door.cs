@@ -1,25 +1,45 @@
 ﻿using UnityEngine;
 
-public class Door : MonoBehaviour {
-
+public class Door : ElectricAgent
+{
+    [SerializeField]
+    private bool hasPower = false;
+    [SerializeField]
     private bool opened = false;
     private Animator animator = null;
 
-    void Start()
+    void Awake()
     {
         animator = GetComponent<Animator>();
     }
 
-    public void UseDoor() {
+    public override void ChangePower(bool status)
+    {
+        hasPower = status;
+        if (hasPower && opened)
+            OpenDoor();
+        else if (!hasPower)
+            CloseDoor();
+    }
+
+    public override void ButtonUse()
+    {
+        opened = !opened;
+        if (!hasPower)
+            return;
         if (opened)
-        {
-            opened = false;
-            animator.SetBool("Open", opened);
-        }
+            OpenDoor();
         else
-        {
-            opened = true;
-            animator.SetBool("Open", opened);
-        }
+            CloseDoor();
+    }
+
+    void OpenDoor()
+    {
+        animator.SetBool("Open", true);
+    }
+
+    void CloseDoor()
+    {
+        animator.SetBool("Open", false);
     }
 }
