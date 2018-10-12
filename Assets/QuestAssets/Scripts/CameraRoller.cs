@@ -12,7 +12,7 @@ public class CameraRoller : MonoBehaviour {
 
     private IEnumerator Move(Transform posToMove)
     {
-        while (Vector3.Distance(transform.position, posToMove.position) > .1f)
+        while (Vector3.Distance(transform.position, posToMove.position) > .3f)
         {
             transform.position += (posToMove.position - transform.position).normalized * speed * Time.deltaTime;
             yield return null;
