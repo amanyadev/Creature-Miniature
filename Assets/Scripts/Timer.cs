@@ -73,7 +73,7 @@ public class Timer : MonoBehaviour
 			elapsedSeconds += Time.deltaTime;
 			if (elapsedSeconds >= totalSeconds)
             {
-				running = false;
+				running = false;//stop
 			}
 		}
 	}
