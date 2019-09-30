@@ -16,8 +16,9 @@ public class Timer : MonoBehaviour
 	float elapsedSeconds = 0;
 	bool running = false;
 	
-	// support for Finished property
+	// support for Finished property . 
 	bool started = false;
+	
 	
 	#endregion
 	
@@ -73,7 +74,7 @@ public class Timer : MonoBehaviour
 			elapsedSeconds += Time.deltaTime;
 			if (elapsedSeconds >= totalSeconds)
             {
-				running = false;
+				running = false;//stop
 			}
 		}
 	}
@@ -84,6 +85,7 @@ public class Timer : MonoBehaviour
 	/// the timer only runs if the total seconds is larger than 0
 	/// This also makes sure the consumer of the class has actually 
 	/// set the duration to something higher than 0
+	/// .
 	/// </summary>
 	public void Run()
     {	
