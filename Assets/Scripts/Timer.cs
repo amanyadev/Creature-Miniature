@@ -84,6 +84,7 @@ public class Timer : MonoBehaviour
 	/// the timer only runs if the total seconds is larger than 0
 	/// This also makes sure the consumer of the class has actually 
 	/// set the duration to something higher than 0
+	/// .
 	/// </summary>
 	public void Run()
     {	
