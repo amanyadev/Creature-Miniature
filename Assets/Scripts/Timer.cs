@@ -16,8 +16,9 @@ public class Timer : MonoBehaviour
 	float elapsedSeconds = 0;
 	bool running = false;
 	
-	// support for Finished property
+	// support for Finished property . 
 	bool started = false;
+	
 	
 	#endregion
 	
