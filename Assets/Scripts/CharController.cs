@@ -7,11 +7,12 @@ public class CharController : MonoBehaviour
     public float jumpSpeed = 8f;
     public float gravity = 50f;
     public float rotateSpeed = 6f;
+    public float accelerationSpeed = 75f;
+
     private Vector3 moveDirection = Vector3.zero;
     private CharacterController controller;
 
     private float lastSpaceKeyDownTime;
-
     private float defaultJumpSpeed;
     private float defaultSpeed;
 
@@ -29,7 +30,7 @@ public class CharController : MonoBehaviour
             if (Input.GetKey(KeyCode.W) &&
                 speed < maxSpeed)
             {
-                speed += 75f * Time.deltaTime;
+                speed += accelerationSpeed * Time.deltaTime;
             }
             else if (Input.GetKeyUp(KeyCode.W))
             {
