@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class CharController : MonoBehaviour
 {
-    public float speed = 6f;  
-    public float maxSpeed = 100f;
+    public float movementSpeed = 6f;  
+    public float maxMovementSpeed = 100f;
     public float jumpSpeed = 8f;
     public float gravity = 50f;
     public float rotateSpeed = 6f;
@@ -14,13 +14,13 @@ public class CharController : MonoBehaviour
 
     private float lastSpaceKeyDownTime;
     private float defaultJumpSpeed;
-    private float defaultSpeed;
+    private float defaultMovementSpeed;
 
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
         defaultJumpSpeed = jumpSpeed;
-        defaultSpeed = speed;
+        defaultMovementSpeed = movementSpeed;
     }
 
     private void Update()
@@ -28,16 +28,16 @@ public class CharController : MonoBehaviour
         if (controller.isGrounded)
         {
             if (Input.GetKey(KeyCode.W) &&
-                speed < maxSpeed)
+                movementSpeed < maxMovementSpeed)
             {
-                speed += accelerationSpeed * Time.deltaTime;
+                movementSpeed += accelerationSpeed * Time.deltaTime;
             }
             else if (Input.GetKeyUp(KeyCode.W))
             {
-                speed = defaultSpeed;
+                movementSpeed = defaultMovementSpeed;
             }
 
-            moveDirection = Input.GetAxis("Vertical") * speed * transform.forward;
+            moveDirection = Input.GetAxis("Vertical") * movementSpeed * transform.forward;
             transform.Rotate(0f, Input.GetAxis("Horizontal") * rotateSpeed, 0f);
 
             // Power jump if button is held
