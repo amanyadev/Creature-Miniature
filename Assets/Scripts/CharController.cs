@@ -14,8 +14,6 @@ public class CharController : MonoBehaviour
 
     private float defaultJumpSpeed;
     private float defaultSpeed;
-    private bool running;
-    private float timer;
 
     private void Awake()
     {
@@ -28,19 +26,14 @@ public class CharController : MonoBehaviour
     {
         if (controller.isGrounded)
         {
-            if (Input.GetKeyDown(KeyCode.W) || running)
+            if (Input.GetKey(KeyCode.W) &&
+                speed < maxSpeed)
             {
-                if (!Input.GetKey(KeyCode.W))
-                {
-                    ResetSpeed();
-                }
-                running = true;
-                timer += 0.1f;
-                
-                if (timer > 1 && speed < maxSpeed)
-                {
-                    speed *= 1.1f;
-                }
+                speed += 75f * Time.deltaTime;
+            }
+            else if (Input.GetKeyUp(KeyCode.W))
+            {
+                speed = defaultSpeed;
             }
 
             moveDirection = Input.GetAxis("Vertical") * speed * transform.forward;
@@ -79,11 +72,5 @@ public class CharController : MonoBehaviour
             jumpSpeed *= 2f;
         }
         moveDirection.y = jumpSpeed;
-    }
-
-    private void ResetSpeed()
-    {
-        timer = 0f;
-        speed = defaultSpeed;
     }
 }
