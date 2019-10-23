@@ -2,89 +2,85 @@ using UnityEngine;
 
 public class CharController : MonoBehaviour
 {
-    public float speed = 6.0f;  //current speed
+    public float speed = 6f;  
     public float maxSpeed = 100f;
-    public float jumpSpeed = 8.0f;
+    public float jumpSpeed = 8f;
     public float gravity = 50f;
-    public float rotateSpeed = 6;
+    public float rotateSpeed = 6f;
     private Vector3 moveDirection = Vector3.zero;
-    CharacterController controller;
+    private CharacterController controller;
     //Timer t;
 
-    bool keyActive = false;
-    float heldDownTimer;
+    private float lastSpaceKeyDownTime;
 
-    float defaultJumpSpeed;
-    float defaultSpeed;
-    bool running = false;
-    float timer = 0;
+    private float defaultJumpSpeed;
+    private float defaultSpeed;
+    private bool running;
+    private float timer;
 
-    void Start()
+    private void Awake()
     {
         controller = GetComponent<CharacterController>();
         //t = GetComponent<Timer> ();
         defaultJumpSpeed = jumpSpeed;
         defaultSpeed = speed;
-        timer = 0;
     }
 
-
-    void Update()
+    private void Update()
     {
         if (controller.isGrounded)
         {
-            moveDirection = new Vector3(0, 0, Input.GetAxis("Vertical"));
-            if (Input.GetKeyDown("w") == true || running == true)
+            if (Input.GetKeyDown(KeyCode.W) || running)
             {
-                if (Input.GetKey("w") != true)
+                if (!Input.GetKey(KeyCode.W))
                 {
-                    timer = 0;
-                    running = false;
-                    speed = defaultSpeed;
+                    ResetSpeed();
                 }
-                if (running == false)
-                {
-                    running = true;
-                }
+                running = true;
                 timer += 0.1f;
-                //Debug.Log(timer);
+                
                 if (timer > 1 && speed < maxSpeed)
                 {
-                    speed = speed * 1.1f;
+                    speed *= 1.1f;
                 }
             }
-            moveDirection = transform.TransformDirection(moveDirection);
-            moveDirection *= speed;
-            transform.Rotate(0, Input.GetAxis("Horizontal") * rotateSpeed, 0);
-            bool jumping = Input.GetKey("space") && Input.GetKey("w");
+
+            moveDirection = Input.GetAxis("Vertical") * speed * transform.forward;
+            transform.Rotate(0f, Input.GetAxis("Horizontal") * rotateSpeed, 0f);
+
+            bool jumping =
+                Input.GetKey(KeyCode.Space) &&
+                Input.GetKey(KeyCode.W);
+
             // Power jump if button is held
-            if ((Input.GetKeyDown("space") || jumping) && keyActive == false)
+            if (Input.GetKeyDown(KeyCode.Space) || jumping)
             {
-                heldDownTimer = Time.time;
-                keyActive = true;
+                lastSpaceKeyDownTime = Time.time;
             }
-            if (Input.GetKeyUp("space") && keyActive == true)
+            else if (Input.GetKeyUp(KeyCode.Space))
             {
-                heldDownTimer = Time.time - heldDownTimer;
-                keyActive = false;
-                if (heldDownTimer > 1 && heldDownTimer < 3)
+                lastSpaceKeyDownTime = Time.time - lastSpaceKeyDownTime;
+                if (lastSpaceKeyDownTime > 1f && lastSpaceKeyDownTime < 3f)
                 {
-                    jumpSpeed = heldDownTimer * jumpSpeed;
+                    jumpSpeed = lastSpaceKeyDownTime * jumpSpeed;
                 }
-                else if (heldDownTimer > 1.5f)
+                else if (lastSpaceKeyDownTime > 1.5f)
                 {
-                    jumpSpeed = jumpSpeed * 2;
+                    jumpSpeed *= 2f;
                 }
                 moveDirection.y = jumpSpeed;
             }
         }
+
         moveDirection.y -= gravity * Time.deltaTime;
         controller.Move(moveDirection * Time.deltaTime);
         jumpSpeed = defaultJumpSpeed;
+    }
 
-        #region Better Jump
-
-        #endregion
+    private void ResetSpeed()
+    {
+        timer = 0f;
+        speed = defaultSpeed;
     }
 }
 //	float keypressedDuration(string key){
