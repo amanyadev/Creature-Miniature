@@ -30,7 +30,7 @@ public class CharController : MonoBehaviour
             if (Input.GetKey(KeyCode.W) &&
                 movementSpeed < maxMovementSpeed)
             {
-                movementSpeed += accelerationSpeed * Time.deltaTime;
+                Accelerate();
             }
             else if (Input.GetKeyUp(KeyCode.W))
             {
@@ -54,6 +54,19 @@ public class CharController : MonoBehaviour
         moveDirection.y -= gravity * Time.deltaTime;
         controller.Move(moveDirection * Time.deltaTime);
         jumpSpeed = defaultJumpSpeed;
+    }
+
+    private void Accelerate()
+    {
+        float acceleration = accelerationSpeed * Time.deltaTime;
+        if (movementSpeed + acceleration > maxMovementSpeed)
+        {
+            movementSpeed = maxMovementSpeed;
+        }
+        else
+        {
+            movementSpeed += acceleration;
+        }
     }
 
     private void StartPreparingJump()
