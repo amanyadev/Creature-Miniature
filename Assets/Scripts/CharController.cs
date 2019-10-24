@@ -2,98 +2,89 @@ using UnityEngine;
 
 public class CharController : MonoBehaviour
 {
-    public float speed = 6.0f;  //current speed
-    public float maxSpeed = 100f;
-    public float jumpSpeed = 8.0f;
+    public float movementSpeed = 6f;  
+    public float maxMovementSpeed = 100f;
+    public float jumpSpeed = 8f;
     public float gravity = 50f;
-    public float rotateSpeed = 6;
+    public float rotateSpeed = 6f;
+    public float accelerationSpeed = 75f;
+
     private Vector3 moveDirection = Vector3.zero;
-    CharacterController controller;
-    //Timer t;
+    private CharacterController controller;
 
-    bool keyActive = false;
-    float heldDownTimer;
+    private float lastSpaceKeyDownTime;
+    private float defaultJumpSpeed;
+    private float defaultMovementSpeed;
 
-    float defaultJumpSpeed;
-    float defaultSpeed;
-    bool running = false;
-    float timer = 0;
-
-    void Start()
+    private void Awake()
     {
         controller = GetComponent<CharacterController>();
-        //t = GetComponent<Timer> ();
         defaultJumpSpeed = jumpSpeed;
-        defaultSpeed = speed;
-        timer = 0;
+        defaultMovementSpeed = movementSpeed;
     }
 
-
-    void Update()
+    private void Update()
     {
         if (controller.isGrounded)
         {
-            moveDirection = new Vector3(0, 0, Input.GetAxis("Vertical"));
-            if (Input.GetKeyDown("w") == true || running == true)
+            if (Input.GetKey(KeyCode.W) &&
+                movementSpeed < maxMovementSpeed)
             {
-                if (Input.GetKey("w") != true)
-                {
-                    timer = 0;
-                    running = false;
-                    speed = defaultSpeed;
-                }
-                if (running == false)
-                {
-                    running = true;
-                }
-                timer += 0.1f;
-                //Debug.Log(timer);
-                if (timer > 1 && speed < maxSpeed)
-                {
-                    speed = speed * 1.1f;
-                }
+                Accelerate();
             }
-            moveDirection = transform.TransformDirection(moveDirection);
-            moveDirection *= speed;
-            transform.Rotate(0, Input.GetAxis("Horizontal") * rotateSpeed, 0);
-            bool jumping = Input.GetKey("space") && Input.GetKey("w");
+            else if (Input.GetKeyUp(KeyCode.W))
+            {
+                movementSpeed = defaultMovementSpeed;
+            }
+
+            moveDirection = Input.GetAxis("Vertical") * movementSpeed * transform.forward;
+            transform.Rotate(0f, Input.GetAxis("Horizontal") * rotateSpeed, 0f);
+
             // Power jump if button is held
-            if ((Input.GetKeyDown("space") || jumping) && keyActive == false)
+            if (Input.GetKey(KeyCode.Space))
             {
-                heldDownTimer = Time.time;
-                keyActive = true;
+                StartPreparingJump();
             }
-            if (Input.GetKeyUp("space") && keyActive == true)
+            else if (Input.GetKeyUp(KeyCode.Space))
             {
-                heldDownTimer = Time.time - heldDownTimer;
-                keyActive = false;
-                if (heldDownTimer > 1 && heldDownTimer < 3)
-                {
-                    jumpSpeed = heldDownTimer * jumpSpeed;
-                }
-                else if (heldDownTimer > 1.5f)
-                {
-                    jumpSpeed = jumpSpeed * 2;
-                }
-                moveDirection.y = jumpSpeed;
+                Jump();
             }
         }
+
         moveDirection.y -= gravity * Time.deltaTime;
         controller.Move(moveDirection * Time.deltaTime);
         jumpSpeed = defaultJumpSpeed;
+    }
 
-        #region Better Jump
+    private void Accelerate()
+    {
+        float acceleration = accelerationSpeed * Time.deltaTime;
+        if (movementSpeed + acceleration > maxMovementSpeed)
+        {
+            movementSpeed = maxMovementSpeed;
+        }
+        else
+        {
+            movementSpeed += acceleration;
+        }
+    }
 
-        #endregion
+    private void StartPreparingJump()
+    {
+        lastSpaceKeyDownTime = Time.time;
+    }
+
+    private void Jump()
+    {
+        lastSpaceKeyDownTime = Time.time - lastSpaceKeyDownTime;
+        if (lastSpaceKeyDownTime > 1f && lastSpaceKeyDownTime < 3f)
+        {
+            jumpSpeed = lastSpaceKeyDownTime * jumpSpeed;
+        }
+        else if (lastSpaceKeyDownTime > 1.5f)
+        {
+            jumpSpeed *= 2f;
+        }
+        moveDirection.y = jumpSpeed;
     }
 }
-//	float keypressedDuration(string key){
-//		float helddown=0;
-//		if(Input.GetKeyDown(key)){
-//			helddown = Time.time;
-//		}
-//		if(Input.GetKeyUp(key)){
-//			helddown = Time.time - helddown;
-//		}
-//		return helddown;
-//	}
