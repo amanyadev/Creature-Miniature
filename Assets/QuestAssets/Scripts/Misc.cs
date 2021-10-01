@@ -4,9 +4,9 @@ public class Misc : MonoBehaviour {
 
     public void ToggleEnabled()
     {
-        if (gameObject.activeInHierarchy)
-            gameObject.SetActive(false);
-        else
-            gameObject.SetActive(true);
-    }
+     if(gameObject){
+     Log(gameobject)
+         else
+             //do stuff
+     }
 }
